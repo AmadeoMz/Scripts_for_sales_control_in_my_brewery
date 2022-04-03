@@ -19,7 +19,7 @@ def main():
     """
     
     # Open and connect to database
-    connection =sql.connect('demo2.db')
+    connection =sql.connect('Ventas.db')
     cursor=connection.cursor()
 
     ############################## Generates data
@@ -62,12 +62,21 @@ def main():
         # Construcción del dataframe (final)
         data_lotes_vta = pd.concat([data_lotes_vta, new_row], ignore_index=True, axis=0)
 
+    ########################### Visualize new entry of table "Deudores"
+    if fecha_cobro_col is None:
+        monto_adelanto = float(input('¿Cuanto dio de adelanto el cliente?. Escriba 0 si no aplica. \n'))
+        monto_rest = monto_col - monto_adelanto
+        new_row_deuda = [id_col, cliente_col, fecha_vta_col, monto_adelanto, monto_rest]
+        data_deuda = confirmation(new_row_deuda, 'Deudores' , cursor)
+
 
     ############################ Preliminar confirmation
     print('Vista preliminar de la nueva entrada \n-----------------------------------------------------------------\
 -----------------------------')
-    print(data_ventas, '\n')
-    print(data_lotes_vta)
+    print('Ventas: \n',data_ventas, '\n')
+    print('Lotes_vta: \n',data_lotes_vta, '\n')
+    if fecha_cobro_col is None:
+        print('Deudores: \n',data_deuda, '\n')
     print('-----------------------------------------------------------------\
 -----------------------------')
     confirm = input('\n ¿Está seguro que desea realizar la ingesta? si/no \n')
@@ -80,6 +89,8 @@ def main():
         data_ventas.to_sql('Ventas', connection, if_exists='append', index=False)
         data_lotes_vta.to_sql('Lotes_vta', connection, if_exists='append', index=False)
         print('Ingesta finalizada')
+        if fecha_cobro_col is None:
+            data_deuda.to_sql('Deudores', connection, if_exists='append', index=False)
         
     elif confirm == 'no':
         print('Cancelando...')
