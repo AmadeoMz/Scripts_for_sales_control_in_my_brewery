@@ -234,7 +234,7 @@ def filling_dates():
         fecha_cobro_col = fecha_vta_col    
     else:
         date_test(fecha_cobro_col)
-        assert(fecha_cobro_col >= fecha_vta_col), 'La fecha de cobro no puede ser anterior a la fecha de venta.'
+        assert( pd.to_datetime(fecha_cobro_col, format='%d-%m-%Y') >= pd.to_datetime(fecha_vta_col, format='%d-%m-%Y') ), 'La fecha de cobro no puede ser anterior a la fecha de venta.'
     
     return fecha_vta_col, fecha_cobro_col
 
